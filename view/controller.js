@@ -7,6 +7,7 @@
       this.width=20;
       this.height=20;
       this.fill='#FFFFFF';
+      this.isClicked=false;
       this.display = function(){
         stroke(1);
         fill(this.fill);
@@ -17,7 +18,10 @@
         && mouseY>=this.y && mouseY<=this.y+this.height
         && mouseIsPressed){
           this.fill='#FF0000';
-          gridExport=gridExport+""+this.x/20+","
+          
+            gridExport=gridExport+""+this.x/20+","+this.y/20+",";
+            this.isClicked=true;
+
         console.log(gridExport);
         }
         
@@ -31,43 +35,38 @@
         grid.push(new Box(20*z,20*i))
       }
     }
-    let cnv=createCanvas(1000, 1000);
+    let cnv=createCanvas(1000, 161);
     cnv.position(10, 100);
     var button = select('#setter');
     button.mousePressed(setText);
-    //Socket connection
-    console.log("asdasd");
-
-    this.socket=io.connect(document.location.host);//document.location.href
-    let placeholder='a';
-    let data={
-        txt:placeholder
-      };
-      this.socket.emit('dataIn',data);
+    var button2 = select('#picSetter');
+    button2.mousePressed(setPic);
+  
     }
 
     function draw(){
       for (var i = 0; i < grid.length; i++) {
         grid[i].display(); 
           
-        if(grid[i].clicked()){
-          console.log("gridExport.toString");
-
+        if(!grid[i].isClicked){
+          grid[i].clicked();
         }    
       }
     }
 
     function setText(){
-        
-          //end
-      
-          //Wake and update the socket event
-          var textBox=select('#myText').value();
-          console.log(gridExport.toString);
+         var textBox=select('#myText').value();
           let data={
-            txt:gridExport+""
+            txt:textBox
           };
           httpPost('setMatrix/',data,'json');
+    }
+
+    function setPic(){
+      let data={
+        txt:gridExport
+      };
+      httpPost('setMatrix/',data,'json');
     }
 
     

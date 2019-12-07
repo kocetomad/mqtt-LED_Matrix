@@ -16,7 +16,7 @@ const char* ssid = "POCOPHONE";
 const char* password =  "testspot";
 
 String MATRIX_TEXT = "temp";
-int test[]={1,5,2,4};
+int test[]={0};
 EspMQTTClient client(
   "192.168.43.181",//SERVER
   1883,// MQTT Broker server ip
@@ -26,9 +26,22 @@ EspMQTTClient client(
 void onConnectionEstablished() {
 
   client.subscribe("mytopic/test", [] (const String & payload)  {
-    Serial.println(payload);
     MATRIX_TEXT = payload;
-    ledMatrix.setText(MATRIX_TEXT);
+    Serial.println(payload);
+    if(getValue(MATRIX_TEXT, ',', 1)==NULL){
+                ledMatrix.setText(MATRIX_TEXT);
+    }else{
+      for(int i=0;i<10000;i++){
+        String temp=getValue(MATRIX_TEXT, ',', i);
+        Serial.println(temp);
+        if(temp==NULL){
+          break;
+        }
+      }
+    }
+    
+
+ //   ledMatrix.setText(split);
 
   });
 
@@ -100,15 +113,32 @@ void loop() {
   ledMatrix.clear();
 
   
-  Serial.println("MATRIX_TEXT is" + MATRIX_TEXT);
 
-  /*
+  
   ledMatrix.scrollTextLeft();
-  ledMatrix.drawText();*/
-  drawShape(test);
+  ledMatrix.drawText();
+ // drawShape(test);
 
 
   //drawHeart(5, 0);
   ledMatrix.commit();
   delay(40);
+}
+
+//String splitter
+ String getValue(String data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length()-1;
+
+  for(int i=0; i<=maxIndex && found<=index; i++){
+    if(data.charAt(i)==separator || i==maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
