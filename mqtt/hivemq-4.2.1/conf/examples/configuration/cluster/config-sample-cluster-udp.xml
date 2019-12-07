@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<hivemq>
+
+    <listeners>
+        <tcp-listener>
+            <port>1883</port>
+            <bind-address>0.0.0.0</bind-address>
+        </tcp-listener>
+    </listeners>
+
+    <cluster>
+        <!-- Enable clustering -->
+        <enabled>true</enabled>
+        <transport>
+            <udp>
+                <!-- 127.0.0.1 only forms a cluster on the local machine.
+                Replace the IP address with the real address of your public
+                interface to form a cluster over the public network -->
+                <bind-address>127.0.0.1</bind-address>
+                <bind-port>7800</bind-port>
+            </udp>
+        </transport>
+        <discovery>
+            <multicast/>
+        </discovery>
+    </cluster>
+
+</hivemq>

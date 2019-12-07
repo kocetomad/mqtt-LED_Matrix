@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<hivemq>
+
+    <listeners>
+        <tls-websocket-listener>
+            <port>8001</port>
+            <bind-address>0.0.0.0</bind-address>
+            <path>/mqtt</path>
+            <allow-extensions>false</allow-extensions>
+            <subprotocols>
+                <subprotocol>mqttv3.1</subprotocol>
+                <subprotocol>mqtt</subprotocol>
+            </subprotocols>
+            <tls>
+                <keystore>
+                    <path>/path/to/the/key/store.jks</path>
+                    <password>password-keystore</password>
+                    <private-key-password>password-key</private-key-password>
+                </keystore>
+                <truststore>
+                    <path>/path/to/the/trust/store.jks</path>
+                    <password>password-truststore</password>
+                </truststore>
+                <client-authentication-mode>NONE</client-authentication-mode>
+            </tls>
+        </tls-websocket-listener>
+    </listeners>
+
+</hivemq>

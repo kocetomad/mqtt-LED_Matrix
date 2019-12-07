@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<hivemq>
+
+    <listeners>
+        <tls-tcp-listener>
+            <port>8883</port>
+            <bind-address>0.0.0.0</bind-address>
+            <tls>
+                <keystore>
+                    <path>/path/to/the/key/store.jks</path>
+                    <password>password-keystore</password>
+                    <private-key-password>password-key</private-key-password>
+                </keystore>
+                <truststore>
+                    <path>/path/to/the/trust/store.jks</path>
+                    <password>password-truststore</password>
+                </truststore>
+                <client-authentication-mode>REQUIRED</client-authentication-mode>
+            </tls>
+        </tls-tcp-listener>
+    </listeners>
+
+</hivemq>
