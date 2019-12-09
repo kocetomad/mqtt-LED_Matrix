@@ -18,9 +18,11 @@ const char* password =  "testspot";
 String MATRIX_TEXT = "temp";
 int test[]={0};
 EspMQTTClient client(
-  "http://51.105.190.58/",//SERVER
-  8883,// MQTT Broker server ip
-  "TestClient"      // Client name that uniquely identify your device
+  "51.105.190.58",//SERVER
+   1883,// MQTT Broker server ip
+  "sammy",    // Omit this parameter to disable MQTT authentification
+  "pass",
+  "TestClient"      // Client name that uniquely identify your 
 );
 //MQTT
 void onConnectionEstablished() {
