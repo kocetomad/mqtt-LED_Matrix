@@ -18,8 +18,8 @@ const char* password =  "testspot";
 String MATRIX_TEXT = "temp";
 int test[]={0};
 EspMQTTClient client(
-  "192.168.43.181",//SERVER
-  1883,// MQTT Broker server ip
+  "http://51.105.190.58/",//SERVER
+  8883,// MQTT Broker server ip
   "TestClient"      // Client name that uniquely identify your device
 );
 //MQTT

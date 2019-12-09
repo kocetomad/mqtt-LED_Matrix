@@ -15,7 +15,14 @@ app.use(bodyParser.json())
 
 //MQTT
 var mqtt = require('mqtt');
-var client  = mqtt.connect('mqtt://127.0.0.1');
+var options = {
+  port: 1883,
+    host: '51.105.190.58',
+    username: 'sammy',
+    password: 'pass',
+  
+}
+var client  = mqtt.connect('mqtt://51.105.190.58',options);
 client.on('connect', function () {
   
 client.publish('mytopic/test', 'Hello mqtt');
