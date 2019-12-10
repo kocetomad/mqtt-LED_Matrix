@@ -14,15 +14,16 @@ int multiply = 1;
 
 const char* ssid = "POCOPHONE";
 const char* password =  "testspot";
-
-String MATRIX_TEXT = "temp";
-int test[]={0};
+bool ShapeON = false;
+String MATRIX_TEXT = "void";
+int test[1000];
+int GLOBAL_COUNTER = 0;
 EspMQTTClient client(
   "51.105.190.58",//SERVER
-   1883,// MQTT Broker server ip
+  1883,// MQTT Broker server ip
   "sammy",    // Omit this parameter to disable MQTT authentification
   "pass",
-  "TestClient"      // Client name that uniquely identify your 
+  "TestClient"      // Client name that uniquely identify your
 );
 //MQTT
 void onConnectionEstablished() {
@@ -30,20 +31,27 @@ void onConnectionEstablished() {
   client.subscribe("mytopic/test", [] (const String & payload)  {
     MATRIX_TEXT = payload;
     Serial.println(payload);
-    if(getValue(MATRIX_TEXT, ',', 1)==NULL){
-                ledMatrix.setText(MATRIX_TEXT);
-    }else{
-      for(int i=0;i<10000;i++){
-        String temp=getValue(MATRIX_TEXT, ',', i);
-        Serial.println(temp);
-        if(temp==NULL){
-          break;
-        }
-      }
-    }
-    
+    if (getValue(MATRIX_TEXT, ',', 1) == NULL) {
+      ledMatrix.setText(MATRIX_TEXT);
+      ShapeON = false;
+    } else {
+      for (int i = 0; i < 1000; i++) {
+        String temp = getValue(MATRIX_TEXT, ',', i);
 
- //   ledMatrix.setText(split);
+        if (temp == NULL) {
+          ShapeON = true;
+          break;
+
+          /*    } else {
+                ledMatrix.setText("error");
+                ShapeON = false;
+                break;*/
+        }
+        test[i] = temp.toInt();
+        GLOBAL_COUNTER = i;
+      }
+
+    }
 
   });
 
@@ -64,62 +72,33 @@ void setup() {
   Serial.println("Connected to the WiFi network");
   ledMatrix.init();
   ledMatrix.setText(MATRIX_TEXT);
+  client.publish("mytopic/test", "check");
 }
-//SHAPES
-void drawHeart(int x, int y) {
-  ledMatrix.setPixel(x, y + 1);
-  ledMatrix.setPixel(x + 1, y + 1);
-  ledMatrix.setPixel(x + 4, y + 1);
-  ledMatrix.setPixel(x + 5, y + 1);
-  for (int i = 0; i < 8; i++) {
-    ledMatrix.setPixel(x - 1 + i, y + 2);
-
-  }
-  for (int i = 0; i < 8; i++) {
-    ledMatrix.setPixel(x - 1 + i, y + 3);
-
-  }
-  for (int i = 1; i < 7; i++) {
-    ledMatrix.setPixel(x - 1 + i, y + 4);
-
-  }
-  for (int i = 2; i < 6; i++) {
-    ledMatrix.setPixel(x - 1 + i, y + 5);
-
-  }
-  for (int i = 3; i < 5; i++) {
-    ledMatrix.setPixel(x - 1 + i, y + 6);
-
-  }
-  intensity += 0.1 * multiply;
-  if (intensity >= 6) {
-    multiply = -1;
-  }
-  if (intensity <= 0.1) {
-    multiply = 1;
-  }
-  ledMatrix.setIntensity(intensity);
-
-}
-
 
 void drawShape(int input[]) {
-  for (int i = 0; i < sizeof(input); i += 2) {
+  for (int i = 0; i < GLOBAL_COUNTER; i += 2) {
     ledMatrix.setPixel(input[i], input[i + 1]);
   }
-  
+
 }
 
 void loop() {
   client.loop();
   ledMatrix.clear();
 
-  
+  if (WiFi.status() != WL_CONNECTED) {
+    ledMatrix.setText("Restart me, internet lost");
+  }
 
-  
-  ledMatrix.scrollTextLeft();
-  ledMatrix.drawText();
- // drawShape(test);
+
+  if (ShapeON) {
+    drawShape(test);
+  } else {
+    ledMatrix.scrollTextLeft();
+    ledMatrix.drawText();
+  }
+
+  //
 
 
   //drawHeart(5, 0);
@@ -128,19 +107,19 @@ void loop() {
 }
 
 //String splitter
- String getValue(String data, char separator, int index)
+String getValue(String data, char separator, int index)
 {
   int found = 0;
   int strIndex[] = {0, -1};
-  int maxIndex = data.length()-1;
+  int maxIndex = data.length() - 1;
 
-  for(int i=0; i<=maxIndex && found<=index; i++){
-    if(data.charAt(i)==separator || i==maxIndex){
-        found++;
-        strIndex[0] = strIndex[1]+1;
-        strIndex[1] = (i == maxIndex) ? i+1 : i;
+  for (int i = 0; i <= maxIndex && found <= index; i++) {
+    if (data.charAt(i) == separator || i == maxIndex) {
+      found++;
+      strIndex[0] = strIndex[1] + 1;
+      strIndex[1] = (i == maxIndex) ? i + 1 : i;
     }
   }
 
-  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
+  return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
