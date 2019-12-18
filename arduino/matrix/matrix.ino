@@ -1,13 +1,17 @@
 #include <SPI.h>
 #include "LedMatrix.h"
 #include "WiFi.h"
+#include <HTTPClient.h>
 #include "EspMQTTClient.h"
 #define NUMBER_OF_DEVICES 4 //number of led matrix connect in series
 #define CS_PIN 15
 #define CLK_PIN 14
 #define MISO_PIN 2 //we do not use this pin just fill to match constructor
 #define MOSI_PIN 12
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
 
+HTTPClient http;
 LedMatrix ledMatrix = LedMatrix(NUMBER_OF_DEVICES, CLK_PIN, MISO_PIN, MOSI_PIN, CS_PIN);
 float intensity = 0;
 int multiply = 1;
@@ -59,6 +63,7 @@ void onConnectionEstablished() {
 
 //MATRIX AND WIFI SETUP
 void setup() {
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
 
   Serial.begin(115200);
   WiFi.begin(ssid, password);
@@ -67,7 +72,6 @@ void setup() {
     delay(500);
     Serial.println("Connecting to WiFi..");
   }
-
 
   Serial.println("Connected to the WiFi network");
   ledMatrix.init();
