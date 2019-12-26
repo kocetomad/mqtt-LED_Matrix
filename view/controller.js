@@ -63,7 +63,7 @@
     }
 
     function setPic(){
-     gridExport=gridExport.substring(0, gridExportx.length - 1);
+     gridExport=gridExport.substring(0, gridExport.length - 1);
       let data={
         txt:gridExport
       };
