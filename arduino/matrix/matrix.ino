@@ -16,8 +16,8 @@ LedMatrix ledMatrix = LedMatrix(NUMBER_OF_DEVICES, CLK_PIN, MISO_PIN, MOSI_PIN, 
 float intensity = 0;
 int multiply = 1;
 
-const char* ssid = "POCOPHONE";
-const char* password =  "testspot";
+const char* ssid = "novax";
+const char* password =  "nova8800";
 bool ShapeON = false;
 String MATRIX_TEXT = "void";
 int test[1000];
@@ -45,11 +45,6 @@ void onConnectionEstablished() {
         if (temp == NULL) {
           ShapeON = true;
           break;
-
-          /*    } else {
-                ledMatrix.setText("error");
-                ShapeON = false;
-                break;*/
         }
         test[i] = temp.toInt();
         GLOBAL_COUNTER = i;
@@ -75,8 +70,24 @@ void setup() {
 
   Serial.println("Connected to the WiFi network");
   ledMatrix.init();
+  http.begin("http://mqttvalche.westeurope.cloudapp.azure.com/refresh"); //Specify the URL
+  int httpCode = http.GET();
+ 
+    if (httpCode > 0) { //Check for the returning code
+ 
+        String payload = http.getString();
+        Serial.println(payload);
+        MATRIX_TEXT=payload;
+      }
+ 
+    else {
+      Serial.println("Error on HTTP request");
+    }
+ 
+  http.end();
   ledMatrix.setText(MATRIX_TEXT);
   client.publish("mytopic/test", "check");
+   //Free the resources//Make the request
 }
 
 void drawShape(int input[]) {
